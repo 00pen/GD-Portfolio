@@ -1,11 +1,4 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "**/*",
-      "use": "@vercel/static"
-    }
-  ],
   "rewrites": [
     {
       "source": "/portfolio",
@@ -39,7 +32,7 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css|png|jpg|gif|ico|svg))",
+      "source": "/(.*\\.(js|css|png|jpg|gif|ico|svg))$",
       "headers": [
         {
           "key": "Cache-Control",
