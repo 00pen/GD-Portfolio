@@ -351,14 +351,19 @@
             });
         }
 
-        function loadPortfolioItems() {
+        async function loadPortfolioItems() {
             const grid = document.getElementById('portfolioGrid');
             grid.innerHTML = ''; // Clear existing items
             
-            // Load images from each category folder
-            portfolioData.categories.forEach(category => {
-                loadImagesFromFolder(category, `images/portfolio/${category}/`, grid);
-            });
+            console.log('Starting to load portfolio items...');
+            
+            // Load images from each category folder sequentially
+            for (const category of portfolioData.categories) {
+                console.log(`Processing category: ${category}`);
+                await loadImagesFromFolder(category, `images/portfolio/${category}/`, grid);
+            }
+            
+            console.log(`Finished loading. Total items in grid: ${grid.children.length}`);
         }
 
         async function loadImagesFromFolder(category, folderPath, grid) {
@@ -429,7 +434,10 @@
             });
             
             // Create portfolio items
-            foundImages.forEach(imageData => {
+            console.log(`Creating ${foundImages.length} portfolio items for ${category}`);
+            foundImages.forEach((imageData, index) => {
+                console.log(`Creating item ${index + 1}: ${imageData.src}`);
+                
                 const portfolioItem = document.createElement('div');
                 portfolioItem.className = 'portfolio-item';
                 portfolioItem.dataset.category = category;
@@ -439,6 +447,14 @@
                 imgElement.alt = `${category} - ${imageData.filename}`;
                 imgElement.loading = 'lazy';
                 
+                // Add error handling for images
+                imgElement.onerror = () => {
+                    console.error(`Failed to load image: ${imageData.src}`);
+                };
+                imgElement.onload = () => {
+                    console.log(`Successfully loaded: ${imageData.src}`);
+                };
+                
                 portfolioItem.appendChild(imgElement);
                 
                 portfolioItem.addEventListener('click', () => {
@@ -446,6 +462,7 @@
                 });
                 
                 grid.appendChild(portfolioItem);
+                console.log(`Added item to grid, grid now has ${grid.children.length} items`);
             });
         }
 
