@@ -387,7 +387,11 @@
                     
                     const promise = new Promise((resolve) => {
                         const img = new Image();
-                        const timeout = setTimeout(() => resolve(null), 1000); // Even longer timeout
+                        const timeout = setTimeout(() => {
+                            console.log(`Timeout for: ${imagePath}`);
+                            resolve(null);
+                        }, 2000); // Increased to 2 seconds
+                        
                         img.onload = () => {
                             clearTimeout(timeout);
                             console.log(`Found image: ${imagePath}`);
@@ -399,8 +403,12 @@
                         };
                         img.onerror = () => {
                             clearTimeout(timeout);
+                            console.log(`Failed to load: ${imagePath}`);
                             resolve(null);
                         };
+                        
+                        // Add crossorigin attribute for better loading reliability
+                        img.crossOrigin = 'anonymous';
                         img.src = imagePath;
                     });
                     
@@ -449,22 +457,29 @@
                 const portfolioItem = document.createElement('div');
                 portfolioItem.className = 'portfolio-item';
                 portfolioItem.dataset.category = category;
-                portfolioItem.style.border = '2px solid red'; // Debug styling
                 
                 const imgElement = document.createElement('img');
-                imgElement.src = imageData.src;
                 imgElement.alt = `${category} - ${imageData.filename}`;
-                imgElement.style.width = '100%';
-                imgElement.style.height = 'auto';
                 
-                // Add error handling for images
+                // Preload image to ensure it loads before adding to DOM
+                const preloadImg = new Image();
+                preloadImg.onload = () => {
+                    console.log(`Preloaded and displaying: ${imageData.src}`);
+                    imgElement.src = imageData.src;
+                };
+                preloadImg.onerror = () => {
+                    console.error(`Failed to preload image: ${imageData.src}`);
+                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Error loading: ${imageData.filename}</div>`;
+                };
+                
+                // Add final error handling for the actual img element
                 imgElement.onerror = () => {
-                    console.error(`Failed to load image: ${imageData.src}`);
-                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0;">Error loading: ${imageData.filename}</div>`;
+                    console.error(`Final load failed for: ${imageData.src}`);
+                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Image unavailable</div>`;
                 };
-                imgElement.onload = () => {
-                    console.log(`Successfully loaded: ${imageData.src}`);
-                };
+                
+                // Start preloading
+                preloadImg.src = imageData.src;
                 
                 portfolioItem.appendChild(imgElement);
                 
