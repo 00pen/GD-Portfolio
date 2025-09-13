@@ -391,7 +391,7 @@
                     
                     const promise = new Promise((resolve) => {
                         const img = new Image();
-                        const timeout = setTimeout(() => resolve(null), 100);
+                        const timeout = setTimeout(() => resolve(null), 500); // Increased timeout
                         img.onload = () => {
                             clearTimeout(timeout);
                             console.log(`Found image: ${imagePath}`);
@@ -412,9 +412,11 @@
                 }
             }
             
-            // Wait for all image checks to complete
-            const results = await Promise.all(imagePromises);
-            foundImages = results.filter(result => result !== null);
+            // Wait for all image checks to complete with longer timeout
+            const results = await Promise.allSettled(imagePromises);
+            foundImages = results
+                .filter(result => result.status === 'fulfilled' && result.value !== null)
+                .map(result => result.value);
             
             console.log(`Found ${foundImages.length} images for ${category}`);
             
