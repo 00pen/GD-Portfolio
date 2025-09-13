@@ -357,15 +357,14 @@
             
             // Load images from each category folder
             portfolioData.categories.forEach(category => {
-                loadImagesFromFolder(category, grid);
+                loadImagesFromFolder(category, `images/portfolio/${category}/`, grid);
             });
         }
 
-        async function loadImagesFromFolder(category, grid) {
+        async function loadImagesFromFolder(category, folderPath, grid) {
             console.log(`Loading images for category: ${category}`);
-            const folderPath = `images/portfolio/${category}/`;
             const imageExtensions = ['jpg', 'png'];
-            const foundImages = [];
+            let foundImages = [];
             
             // Updated naming convention: cover.jpg/png + image (1), image (2), etc.
             const possibleNames = ['cover'];
