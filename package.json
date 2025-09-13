@@ -1,0 +1,28 @@
+{
+  "name": "ghulam-asheeq-portfolio",
+  "version": "1.0.0",
+  "description": "Professional portfolio website for Ghulam-Asheeq Salifu - Creative Graphic Designer",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx http-server . -p 3000 -o",
+    "build": "echo 'Static site - no build required'",
+    "deploy": "echo 'Ready for deployment to Netlify, Vercel, or GitHub Pages'"
+  },
+  "keywords": [
+    "portfolio",
+    "graphic-design",
+    "web-design",
+    "creative",
+    "designer"
+  ],
+  "author": "Ghulam-Asheeq Salifu",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/portfolio.git"
+  },
+  "homepage": "https://yourusername.github.io/portfolio"
+}

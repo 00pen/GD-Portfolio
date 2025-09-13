@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio Admin - Enhanced</title>
+    <link rel="stylesheet" href="admin-styles.css">
+    <link rel="stylesheet" href="admin-enhanced.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-container">
+            <h1>Portfolio Admin</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="admin-panel hidden">
+        <!-- Header -->
+        <header class="admin-header">
+            <div class="admin-header-left">
+                <h1 class="admin-title">Portfolio Admin</h1>
+                <div class="preview-modes">
+                    <button class="preview-mode-btn active" data-mode="desktop">
+                        <i class="fas fa-desktop"></i> Desktop
+                    </button>
+                    <button class="preview-mode-btn" data-mode="tablet">
+                        <i class="fas fa-tablet-alt"></i> Tablet
+                    </button>
+                    <button class="preview-mode-btn" data-mode="mobile">
+                        <i class="fas fa-mobile-alt"></i> Mobile
+                    </button>
+                </div>
+            </div>
+            <div class="admin-header-right">
+                <button id="undoBtn" class="btn btn-secondary" title="Undo">
+                    <i class="fas fa-undo"></i>
+                </button>
+                <button id="redoBtn" class="btn btn-secondary" title="Redo">
+                    <i class="fas fa-redo"></i>
+                </button>
+                <button id="saveBtn" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button id="previewBtn" class="btn btn-primary">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button id="publishBtn" class="btn btn-warning">
+                    <i class="fas fa-globe"></i> Publish
+                </button>
+                <button id="logoutBtn" class="btn btn-danger">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </header>
+
+        <div class="admin-layout">
+            <!-- Left Sidebar -->
+            <aside class="admin-sidebar">
+                <nav class="sidebar-nav">
+                    <a href="#" class="sidebar-tab active" data-tab="pages">
+                        <i class="fas fa-file-alt"></i>
+                        <span>Pages</span>
+                    </a>
+                    <a href="#" class="sidebar-tab" data-tab="portfolio">
+                        <i class="fas fa-briefcase"></i>
+                        <span>Portfolio Items</span>
+                    </a>
+                    <a href="#" class="sidebar-tab" data-tab="content">
+                        <i class="fas fa-th-large"></i>
+                        <span>Content Blocks</span>
+                    </a>
+                    <a href="#" class="sidebar-tab" data-tab="media">
+                        <i class="fas fa-images"></i>
+                        <span>Media Library</span>
+                    </a>
+                    <a href="#" class="sidebar-tab" data-tab="theme">
+                        <i class="fas fa-palette"></i>
+                        <span>Theme</span>
+                    </a>
+                    <a href="#" class="sidebar-tab" data-tab="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </a>
+                </nav>
+                <!-- Pages Panel -->
+                <div id="pagesPanel" class="sidebar-panel active">
+                    <div class="panel-header">
+                        <h3>Page Content Editor</h3>
+                        <select id="pageSelector" class="page-selector" title="Select page to edit">
+                            <option value="index">Home Page (index.html)</option>
+                            <option value="portfolio">Portfolio Page</option>
+                            <option value="about">About Page</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Home Page Content Editor -->
+                    <div id="indexPageEditor" class="page-editor active">
+                        <!-- Navigation Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-bars"></i> Navigation</h4>
+                            <div class="form-group">
+                                <label for="logoText">Logo Text</label>
+                                <input type="text" id="logoText" placeholder="Your Name/Brand">
+                            </div>
+                            <div class="form-group">
+                                <label for="logoIcon">Logo Icon (Font Awesome class)</label>
+                                <input type="text" id="logoIcon" placeholder="fas fa-mountain">
+                            </div>
+                        </div>
+
+                        <!-- Hero Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-star"></i> Hero Section</h4>
+                            <div class="form-group">
+                                <label for="heroMainTitle">Main Title</label>
+                                <input type="text" id="heroMainTitle" placeholder="Hi, I'm Your Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="heroHighlight">Highlighted Name</label>
+                                <input type="text" id="heroHighlight" placeholder="Your Name">
+                            </div>
+                            <div class="form-group">
+                                <label for="heroSubtitle">Description</label>
+                                <textarea id="heroSubtitle" rows="3" placeholder="Your professional description"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="heroCTAText">Call-to-Action Button Text</label>
+                                <input type="text" id="heroCTAText" placeholder="VIEW MY WORK">
+                            </div>
+                            <div class="form-group">
+                                <label for="heroCTALink">Call-to-Action Link</label>
+                                <input type="text" id="heroCTALink" placeholder="portfolio.html">
+                            </div>
+                        </div>
+
+                        <!-- About Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-user"></i> About Section</h4>
+                            <div class="form-group">
+                                <label for="aboutTitle">About Title</label>
+                                <input type="text" id="aboutTitle" placeholder="About Me">
+                            </div>
+                            <div class="form-group">
+                                <label for="aboutIntro">Introduction Paragraph</label>
+                                <textarea id="aboutIntro" rows="3" placeholder="Your introduction"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="aboutParagraph1">About Paragraph 1</label>
+                                <textarea id="aboutParagraph1" rows="3" placeholder="First paragraph about yourself" title="About paragraph 1"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="aboutParagraph2">About Paragraph 2</label>
+                                <textarea id="aboutParagraph2" rows="3" placeholder="Second paragraph about yourself" title="About paragraph 2"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="aboutParagraph3">About Paragraph 3</label>
+                                <textarea id="aboutParagraph3" rows="3" placeholder="Third paragraph about yourself" title="About paragraph 3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Skills Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-tools"></i> Skills Section</h4>
+                            <div class="skills-editor">
+                                <div class="skill-category-editor">
+                                    <h5>Design Expertise</h5>
+                                    <div class="form-group">
+                                        <label for="designSkillsTitle">Category Title</label>
+                                        <input type="text" id="designSkillsTitle" placeholder="Design Expertise">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="designSkillsList">Skills (one per line)</label>
+                                        <textarea id="designSkillsList" rows="6" placeholder="Brand Identity & Logo Design&#10;Event Design&#10;Tech & Gaming&#10;Food & Lifestyle&#10;Personal Projects"></textarea>
+                                    </div>
+                                </div>
+                                <div class="skill-category-editor">
+                                    <h5>Technical Skills</h5>
+                                    <div class="form-group">
+                                        <label for="technicalSkillsTitle">Category Title</label>
+                                        <input type="text" id="technicalSkillsTitle" placeholder="Technical Skills">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="technicalSkillsList">Skills (one per line)</label>
+                                        <textarea id="technicalSkillsList" rows="6" placeholder="Adobe Creative Suite&#10;Canva&#10;Figma"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Stats Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-chart-bar"></i> Statistics</h4>
+                            <div class="stats-editor">
+                                <div class="stat-editor">
+                                    <h5>Stat 1</h5>
+                                    <div class="form-group">
+                                        <label for="stat1Number">Number</label>
+                                        <input type="text" id="stat1Number" placeholder="50+">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stat1Label">Label</label>
+                                        <input type="text" id="stat1Label" placeholder="Projects Completed">
+                                    </div>
+                                </div>
+                                <div class="stat-editor">
+                                    <h5>Stat 2</h5>
+                                    <div class="form-group">
+                                        <label for="stat2Number">Number</label>
+                                        <input type="text" id="stat2Number" placeholder="25+">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stat2Label">Label</label>
+                                        <input type="text" id="stat2Label" placeholder="Happy Clients">
+                                    </div>
+                                </div>
+                                <div class="stat-editor">
+                                    <h5>Stat 3</h5>
+                                    <div class="form-group">
+                                        <label for="stat3Number">Number</label>
+                                        <input type="text" id="stat3Number" placeholder="3+">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="stat3Label">Label</label>
+                                        <input type="text" id="stat3Label" placeholder="Years Experience">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-envelope"></i> Contact Section</h4>
+                            <div class="form-group">
+                                <label for="contactMainTitle">Contact Title</label>
+                                <input type="text" id="contactMainTitle" placeholder="Let's Create Something Amazing">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactMainSubtitle">Contact Subtitle</label>
+                                <input type="text" id="contactMainSubtitle" placeholder="Ready to elevate your brand?">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactEmailAddress">Email Address</label>
+                                <input type="email" id="contactEmailAddress" placeholder="your@email.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactPhoneNumber">Phone Number</label>
+                                <input type="tel" id="contactPhoneNumber" placeholder="+1234567890">
+                            </div>
+                            <div class="form-group">
+                                <label for="contactCTAText">Contact Button Text</label>
+                                <input type="text" id="contactCTAText" placeholder="GET IN TOUCH">
+                            </div>
+                        </div>
+
+                        <!-- Footer Section -->
+                        <div class="content-section">
+                            <h4><i class="fas fa-copyright"></i> Footer</h4>
+                            <div class="form-group">
+                                <label for="footerText">Footer Text</label>
+                                <input type="text" id="footerText" placeholder="© 2025 Your Name. All rights reserved.">
+                            </div>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="content-section">
+                            <button id="savePageContent" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Save Page Content
+                            </button>
+                            <button id="previewToggle" class="btn btn-secondary">
+                                <i class="fas fa-eye"></i> Enable Live Preview
+                            </button>
+                        </div>
+                        
+                        <!-- Live Preview Frame -->
+                        <div id="previewContainer" style="display: none; margin-top: 20px; border: 1px solid #ddd; border-radius: 8px; overflow: hidden;">
+                            <div style="background: #f8f9fa; padding: 10px; border-bottom: 1px solid #ddd; font-weight: 500;">
+                                <i class="fas fa-desktop"></i> Live Preview
+                            </div>
+                            <iframe id="previewFrame" src="" style="width: 100%; height: 600px; border: none; display: none;"></iframe>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Blocks Panel -->
+                <div id="contentPanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Content Blocks</h3>
+                    </div>
+                    <div class="content-blocks">
+                        <div class="content-block" data-type="text">
+                            <i class="fas fa-font"></i>
+                            <span>Text</span>
+                        </div>
+                        <div class="content-block" data-type="image">
+                            <i class="fas fa-image"></i>
+                            <span>Image</span>
+                        </div>
+                        <div class="content-block" data-type="gallery">
+                            <i class="fas fa-th"></i>
+                            <span>Photo Grid</span>
+                        </div>
+                        <div class="content-block" data-type="button">
+                            <i class="fas fa-link"></i>
+                            <span>Button</span>
+                        </div>
+                        <div class="content-block" data-type="divider">
+                            <i class="fas fa-minus"></i>
+                            <span>Divider</span>
+                        </div>
+                        <div class="content-block" data-type="spacer">
+                            <i class="fas fa-arrows-alt-v"></i>
+                            <span>Spacer</span>
+                        </div>
+                        <div class="content-block" data-type="embed">
+                            <i class="fas fa-code"></i>
+                            <span>Embed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Portfolio Items Panel -->
+                <div id="portfolioPanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Portfolio Items</h3>
+                        <button id="addPortfolioItemBtn" class="btn btn-sm btn-primary">
+                            <i class="fas fa-plus"></i> Add Item
+                        </button>
+                    </div>
+                    <div class="portfolio-items-list" id="portfolioItemsList">
+                        <!-- Portfolio items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Media Panel -->
+                <div id="mediaPanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Media Library</h3>
+                        <button id="uploadMediaBtn" class="btn btn-sm btn-primary">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+                    <div class="media-grid" id="mediaGrid">
+                        <!-- Media items will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Theme Panel -->
+                <div id="themePanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Theme Settings</h3>
+                    </div>
+                    <div class="theme-settings">
+                        <div class="setting-group">
+                            <label>Primary Color</label>
+                            <input type="color" id="primaryColor" value="#007bff" title="Primary color for the theme">
+                        </div>
+                        <div class="setting-group">
+                            <label>Secondary Color</label>
+                            <input type="color" id="secondaryColor" value="#6c757d" title="Secondary color for the theme">
+                        </div>
+                        <div class="setting-group">
+                            <label>Font Family</label>
+                            <select id="fontFamily" title="Choose font family for the website">
+                                <option value="Arial, sans-serif">Arial</option>
+                                <option value="Georgia, serif">Georgia</option>
+                                <option value="'Times New Roman', serif">Times New Roman</option>
+                                <option value="'Helvetica Neue', sans-serif">Helvetica Neue</option>
+                                <option value="'Roboto', sans-serif">Roboto</option>
+                            </select>
+                        </div>
+                        <div class="setting-group">
+                            <label>Layout Style</label>
+                            <select id="layoutStyle" title="Choose layout style for the website">
+                                <option value="modern">Modern</option>
+                                <option value="classic">Classic</option>
+                                <option value="minimal">Minimal</option>
+                                <option value="creative">Creative</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Site Settings Panel -->
+                <div id="settingsPanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Site Settings</h3>
+                    </div>
+                    <div class="site-settings">
+                        <div class="setting-group">
+                            <label for="siteTitle">Site Title</label>
+                            <input type="text" id="siteTitle" placeholder="My Portfolio" title="Site Title">
+                        </div>
+                        <div class="setting-group">
+                            <label for="siteDescription">Site Description</label>
+                            <textarea id="siteDescription" placeholder="Portfolio description" title="Site Description"></textarea>
+                        </div>
+                        
+                        <h4>Hero Section</h4>
+                        <div class="setting-group">
+                            <label for="heroTitle">Hero Title</label>
+                            <input type="text" id="heroTitle" placeholder="Your main title" title="Hero Title">
+                        </div>
+                        <div class="setting-group">
+                            <label for="heroDescription">Hero Description</label>
+                            <textarea id="heroDescription" placeholder="Your hero description" title="Hero Description"></textarea>
+                        </div>
+                        
+                        <h4>Contact Section</h4>
+                        <div class="setting-group">
+                            <label for="contactTitleInput">Contact Title</label>
+                            <input type="text" id="contactTitleInput" placeholder="Contact section title" title="Contact Title">
+                        </div>
+                        <div class="setting-group">
+                            <label for="contactSubtitleInput">Contact Subtitle</label>
+                            <input type="text" id="contactSubtitleInput" placeholder="Contact subtitle" title="Contact Subtitle">
+                        </div>
+                        <div class="setting-group">
+                            <label for="contactEmailInput">Contact Email</label>
+                            <input type="email" id="contactEmailInput" placeholder="your@email.com" title="Contact Email">
+                        </div>
+                        <div class="setting-group">
+                            <label for="contactPhoneInput">Contact Phone</label>
+                            <input type="tel" id="contactPhoneInput" placeholder="+1234567890" title="Contact Phone">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Panel -->
+                <div id="settingsPanel" class="sidebar-panel">
+                    <div class="panel-header">
+                        <h3>Site Settings</h3>
+                    </div>
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label for="siteTitle">Site Title</label>
+                            <input type="text" id="siteTitle" placeholder="My Portfolio">
+                        </div>
+                        <div class="form-group">
+                            <label for="siteDescription">Site Description</label>
+                            <textarea id="siteDescription" placeholder="Portfolio description for SEO"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="contactEmail">Contact Email</label>
+                            <input type="email" id="contactEmail" placeholder="your@email.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="socialLinks">Social Links</label>
+                            <div class="social-links-editor">
+                                <input type="url" placeholder="LinkedIn URL" data-platform="linkedin">
+                                <input type="url" placeholder="Twitter URL" data-platform="twitter">
+                                <input type="url" placeholder="Instagram URL" data-platform="instagram">
+                                <input type="url" placeholder="GitHub URL" data-platform="github">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Main Content Area -->
+            <main class="admin-main">
+                <div class="canvas-container">
+                    <div id="pageCanvas" class="page-canvas">
+                        <!-- Page content will be rendered here -->
+                        <div class="canvas-placeholder">
+                            <i class="fas fa-plus-circle"></i>
+                            <p>Select a page or create a new one to start editing</p>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Right Properties Panel -->
+            <aside class="properties-panel" id="propertiesPanel">
+                <div class="panel-header">
+                    <h3>Properties</h3>
+                </div>
+                <div class="properties-content" id="propertiesContent">
+                    <p class="no-selection">Select an element to edit its properties</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    
+    <!-- Page Settings Modal -->
+    <div id="pageSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Page Settings</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="pageSettingsForm">
+                    <div class="form-group">
+                        <label for="pageTitle">Page Title</label>
+                        <input type="text" id="pageTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageSlug">URL Slug</label>
+                        <input type="text" id="pageSlug" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageType">Page Type</label>
+                        <select id="pageType">
+                            <option value="page">Standard Page</option>
+                            <option value="gallery">Gallery</option>
+                            <option value="home">Home Page</option>
+                            <option value="contact">Contact Page</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="pageDescription">Meta Description</label>
+                        <textarea id="pageDescription" placeholder="Page description for SEO"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="pageVisible"> Show in navigation
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePageSettings">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Media Upload Modal -->
+    <div id="mediaUploadModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Upload Media</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <p>Drag and drop files here or click to browse</p>
+                    <input type="file" id="fileInput" multiple accept="image/*" hidden>
+                </div>
+                <div class="upload-progress" id="uploadProgress" style="display: none;">
+                    <div class="progress-bar">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">Uploading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text Editor Modal -->
+    <div id="textEditorModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>Text Editor</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="text-editor-toolbar">
+                    <button class="editor-btn" data-command="bold"><i class="fas fa-bold"></i></button>
+                    <button class="editor-btn" data-command="italic"><i class="fas fa-italic"></i></button>
+                    <button class="editor-btn" data-command="underline"><i class="fas fa-underline"></i></button>
+                    <div class="toolbar-separator"></div>
+                    <select class="editor-select" data-command="fontSize">
+                        <option value="12px">12px</option>
+                        <option value="14px">14px</option>
+                        <option value="16px" selected>16px</option>
+                        <option value="18px">18px</option>
+                        <option value="24px">24px</option>
+                        <option value="32px">32px</option>
+                    </select>
+                    <div class="toolbar-separator"></div>
+                    <button class="editor-btn" data-command="justifyLeft"><i class="fas fa-align-left"></i></button>
+                    <button class="editor-btn" data-command="justifyCenter"><i class="fas fa-align-center"></i></button>
+                </div>
+                <div class="text-editor-content" id="textEditorContent" contenteditable="true">
+                    Enter your text here...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveTextContent">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Text Content Modal -->
+    <div id="textContentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Text Content</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="text-editor" contenteditable="true" id="textEditor">
+                    Enter your text here...
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveTextContent">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio Item Modal -->
+    <div id="portfolioItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="portfolioModalTitle">Add Portfolio Item</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="portfolioItemForm">
+                    <div class="form-group">
+                        <label for="portfolioTitle">Title</label>
+                        <input type="text" id="portfolioTitle" name="title" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolioDescription">Description</label>
+                        <textarea id="portfolioDescription" name="description" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolioCategory">Category</label>
+                        <input type="text" id="portfolioCategory" name="category" placeholder="e.g., Branding, Web Design">
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolioImages">Images</label>
+                        <input type="file" id="portfolioImages" name="images" multiple accept="image/*">
+                        <div id="portfolioImagePreview" class="image-preview-grid"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary modal-close">Cancel</button>
+                <button type="button" class="btn btn-primary" id="savePortfolioItem">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin-enhanced-fixed.js"></script>
+</body>
+</html>

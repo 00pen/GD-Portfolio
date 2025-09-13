@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse the complete portfolio of Ghulam-Asheeq Salifu featuring business branding, event flyers, tech promotions, and restaurant & lifestyle designs.">
+    <meta name="keywords" content="portfolio, graphic design, business branding, event flyers, tech promotions, restaurant design, lifestyle design">
+    <meta name="author" content="Ghulam-Asheeq Salifu">
+    <title>Portfolio - Ghulam-Asheeq Salifu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .portfolio-page {
+            padding-top: 140px;
+            min-height: 100vh;
+            background: #fff;
+        }
+        
+        .portfolio-header {
+            text-align: center;
+            margin-bottom: 6rem;
+            position: relative;
+        }
+        
+        .portfolio-header::after {
+            content: '';
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: #333;
+        }
+        
+        .portfolio-header h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            color: #000;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .portfolio-header p {
+            font-size: 1.25rem;
+            color: #666;
+            max-width: 600px;
+            margin: 0 auto;
+            font-weight: 400;
+        }
+        
+        .back-button {
+            position: fixed;
+            top: 50%;
+            left: 2rem;
+            transform: translateY(-50%);
+            background: #000;
+            color: #fff;
+            border: 2px solid #000;
+            border-radius: 4px;
+            padding: 1rem;
+            text-decoration: none;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.3s ease;
+            z-index: 100;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+        }
+        
+        .back-button:hover {
+            background: #333;
+            color: #fff;
+            transform: translateY(-50%) translateX(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .portfolio-filters {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .category-descriptions {
+            max-width: 1000px;
+            margin: 0 auto 3rem;
+            text-align: center;
+            padding: 0 1rem;
+        }
+        
+        .category-description {
+            display: none;
+            font-size: 1.1rem;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .category-description.active {
+            display: block;
+        }
+        
+        .filter-btn {
+            background: #fff;
+            color: #000;
+            border: 1px solid #e5e5e5;
+            border-radius: 25px;
+            padding: 0.6rem 1.2rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.85rem;
+        }
+        
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: #000;
+            color: #fff;
+            border-color: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .category-description {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            font-style: italic;
+            color: #666;
+            display: none;
+        }
+
+        .category-description.active {
+            display: block;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 3rem;
+            justify-content: center;
+        }
+
+        .portfolio-item {
+            position: relative;
+            border-radius: 10px;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.1);
+            aspect-ratio: 1;
+        }
+
+        .portfolio-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Lightbox Modal */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 90%;
+            border-radius: 10px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: #fff;
+            color: #000;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            font-weight: bold;
+            z-index: 10;
+            transition: all 0.3s ease;
+        }
+
+        .lightbox-close:hover {
+            background: #f0f0f0;
+            transform: scale(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .portfolio-grid {
+                grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page Transition Overlay -->
+    <div class="page-transition" id="pageTransition">
+        <div class="loader"></div>
+    </div>
+    
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <a href="index.html" class="logo">
+                <i class="fas fa-mountain"></i>
+                Ghulam-Asheeq Salifu
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="portfolio.html">Work</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <li><a href="admin.html">Admin</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Back Button -->
+    <a href="index.html" class="back-button">
+        <i class="fas fa-arrow-left"></i>
+        BACK
+    </a>
+
+    <!-- Portfolio Page -->
+    <main class="portfolio-page">
+        <div class="container">
+            <div class="portfolio-header">
+                <h1>My <span class="highlight">Work</span></h1>
+                <p>Professional design solutions for modern businesses</p>
+            </div>
+
+            <div class="portfolio-filters">
+                <!-- Filters will be generated automatically from folders -->
+            </div>
+
+            <!-- Category Descriptions -->
+            <div class="category-descriptions">
+                <!-- Descriptions will be generated automatically -->
+            </div>
+
+            <div class="portfolio-grid" id="portfolioGrid">
+                <!-- Portfolio items will be dynamically loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <!-- Lightbox Modal -->
+    <div class="lightbox" id="lightbox" onclick="closeLightbox()">
+        <button class="lightbox-close" onclick="closeLightbox()">&times;</button>
+        <img class="lightbox-content" id="lightboxImg" src="" alt="">
+    </div>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 id="contactTitle">want <span class="highlight">graphic</span> designs?</h2>
+            <p id="contactSubtitle">your project deserves better than Canva templates.</p>
+            <div class="contact-info">
+                <div class="contact-item">
+                    <i class="fas fa-envelope"></i>
+                    <strong>EMAIL</strong>
+                    <a href="mailto:salifughulamasheeq@gmail.com" id="contactEmail">salifughulamasheeq@gmail.com</a>
+                </div>
+                <div class="contact-item">
+                    <i class="fas fa-phone"></i>
+                    <strong>PHONE</strong>
+                    <a href="tel:+233530600158" id="contactPhone">+233 53 060 0158</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+    <script src="portfolio-data.js"></script>
+    <script>
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Portfolio page loaded, starting image loading...');
+            generateFilters();
+            loadPortfolioItems();
+            setupFiltering();
+        });
+
+        function generateFilters() {
+            const filterContainer = document.querySelector('.portfolio-filters');
+            const descContainer = document.querySelector('.category-descriptions');
+            
+            // Clear existing filters and descriptions
+            filterContainer.innerHTML = '<button class="filter-btn active" data-filter="all">All Work</button>';
+            descContainer.innerHTML = '<div class="category-description active" id="desc-all">' + portfolioData.categoryDescriptions.all + '</div>';
+            
+            // Generate filter buttons and descriptions from categories
+            portfolioData.categories.forEach(category => {
+                const button = document.createElement('button');
+                button.className = 'filter-btn';
+                button.dataset.filter = category;
+                button.textContent = portfolioData.categoryLabels[category] || category;
+                filterContainer.appendChild(button);
+                
+                const desc = document.createElement('div');
+                desc.className = 'category-description';
+                desc.id = `desc-${category}`;
+                desc.textContent = portfolioData.categoryDescriptions[category] || '';
+                descContainer.appendChild(desc);
+            });
+        }
+
+        function loadPortfolioItems() {
+            const grid = document.getElementById('portfolioGrid');
+            grid.innerHTML = ''; // Clear existing items
+            
+            // Load images from each category folder
+            portfolioData.categories.forEach(category => {
+                loadImagesFromFolder(category, grid);
+            });
+        }
+
+        async function loadImagesFromFolder(category, grid) {
+            console.log(`Loading images for category: ${category}`);
+            const folderPath = `images/portfolio/${category}/`;
+            const imageExtensions = ['jpg', 'png'];
+            const foundImages = [];
+            
+            // Updated naming convention: cover.jpg/png + image (1), image (2), etc.
+            const possibleNames = ['cover'];
+            
+            // Add numbered variations with spaces: image (1), image (2), etc.
+            for (let i = 1; i <= 12; i++) {
+                possibleNames.push(`image (${i})`);
+            }
+            
+            console.log(`Testing ${possibleNames.length} possible names with ${imageExtensions.length} extensions`);
+            
+            // Test combinations
+            for (const name of possibleNames) {
+                for (const ext of imageExtensions) {
+                    const filename = `${name}.${ext}`;
+                    const imagePath = `${folderPath}${filename}`;
+                    
+                    try {
+                        const img = new Image();
+                        const loaded = await new Promise((resolve) => {
+                            const timeout = setTimeout(() => resolve(false), 100);
+                            img.onload = () => {
+                                clearTimeout(timeout);
+                                console.log(`Found image: ${imagePath}`);
+                                resolve(true);
+                            };
+                            img.onerror = () => {
+                                clearTimeout(timeout);
+                                resolve(false);
+                            };
+                            img.src = imagePath;
+                        });
+                        
+                        if (loaded) {
+                            foundImages.push({
+                                src: imagePath,
+                                filename: filename,
+                                isCover: name.toLowerCase() === 'cover'
+                            });
+                        }
+                    } catch (error) {
+                        console.error(`Error loading ${imagePath}:`, error);
+                    }
+                }
+            }
+            
+            console.log(`Found ${foundImages.length} images for ${category}`);
+            
+            // Sort: cover first, then image (1), image (2), etc.
+            foundImages.sort((a, b) => {
+                // Extract number from filename for proper sorting
+                const getNumber = (filename) => {
+                    if (filename.toLowerCase().startsWith('cover.')) return -1;
+                    const match = filename.match(/image \((\d+)\)/i);
+                    return match ? parseInt(match[1]) : 999;
+                };
+                
+                return getNumber(a.filename) - getNumber(b.filename);
+            });
+            
+            // Create portfolio items
+            foundImages.forEach(imageData => {
+                const portfolioItem = document.createElement('div');
+                portfolioItem.className = 'portfolio-item';
+                portfolioItem.dataset.category = category;
+                
+                const imgElement = document.createElement('img');
+                imgElement.src = imageData.src;
+                imgElement.alt = `${category} - ${imageData.filename}`;
+                imgElement.loading = 'lazy';
+                
+                portfolioItem.appendChild(imgElement);
+                
+                portfolioItem.addEventListener('click', () => {
+                    openLightbox(imageData.src, `${category} - ${imageData.filename}`);
+                });
+                
+                grid.appendChild(portfolioItem);
+            });
+        }
+
+        function setupFiltering() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            
+            filterBtns.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove active class from all buttons
+                    filterBtns.forEach(b => b.classList.remove('active'));
+                    // Add active class to clicked button
+                    btn.classList.add('active');
+
+                    const filter = btn.dataset.filter;
+                    const portfolioItems = document.querySelectorAll('.portfolio-item');
+                    
+                    // Update category descriptions
+                    document.querySelectorAll('.category-description').forEach(desc => {
+                        desc.classList.remove('active');
+                    });
+                    
+                    const activeDesc = document.getElementById(`desc-${filter}`);
+                    if (activeDesc) {
+                        activeDesc.classList.add('active');
+                    }
+                    
+                    // Filter portfolio items
+                    portfolioItems.forEach(item => {
+                        if (filter === 'all' || item.dataset.category === filter) {
+                            item.style.display = 'flex';
+                            item.style.opacity = '1';
+                            item.style.transform = 'scale(1)';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+        }
+
+        function openLightbox(imageSrc, title) {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightboxImg');
+            
+            lightboxImg.src = imageSrc;
+            lightboxImg.alt = title;
+            lightbox.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeLightbox() {
+            const lightbox = document.getElementById('lightbox');
+            lightbox.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+    </script>
+</body>
+</html>
