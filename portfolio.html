@@ -437,21 +437,29 @@
             
             // Create portfolio items
             console.log(`Creating ${foundImages.length} portfolio items for ${category}`);
-            foundImages.forEach((imageData, index) => {
+            
+            // Take only first 2 images per category for now to debug
+            const imagesToShow = foundImages.slice(0, 2);
+            console.log(`Showing first ${imagesToShow.length} images for ${category}`);
+            
+            imagesToShow.forEach((imageData, index) => {
                 console.log(`Creating item ${index + 1}: ${imageData.src}`);
                 
                 const portfolioItem = document.createElement('div');
                 portfolioItem.className = 'portfolio-item';
                 portfolioItem.dataset.category = category;
+                portfolioItem.style.border = '2px solid red'; // Debug styling
                 
                 const imgElement = document.createElement('img');
                 imgElement.src = imageData.src;
                 imgElement.alt = `${category} - ${imageData.filename}`;
-                imgElement.loading = 'lazy';
+                imgElement.style.width = '100%';
+                imgElement.style.height = 'auto';
                 
                 // Add error handling for images
                 imgElement.onerror = () => {
                     console.error(`Failed to load image: ${imageData.src}`);
+                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0;">Error loading: ${imageData.filename}</div>`;
                 };
                 imgElement.onload = () => {
                     console.log(`Successfully loaded: ${imageData.src}`);
