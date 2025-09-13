@@ -371,15 +371,11 @@
             const imageExtensions = ['jpg', 'png'];
             let foundImages = [];
             
-            // Updated naming convention: cover.jpg/png + image (1), image (2), etc.
+            // Test multiple possible filenames
             const possibleNames = ['cover'];
-            
-            // Add numbered variations with spaces: image (1), image (2), etc.
             for (let i = 1; i <= 12; i++) {
                 possibleNames.push(`image (${i})`);
             }
-            
-            console.log(`Testing ${possibleNames.length} possible names with ${imageExtensions.length} extensions`);
             
             // Test combinations - but only add to foundImages array after all checks
             const imagePromises = [];
@@ -391,7 +387,7 @@
                     
                     const promise = new Promise((resolve) => {
                         const img = new Image();
-                        const timeout = setTimeout(() => resolve(null), 500); // Increased timeout
+                        const timeout = setTimeout(() => resolve(null), 1000); // Even longer timeout
                         img.onload = () => {
                             clearTimeout(timeout);
                             console.log(`Found image: ${imagePath}`);
@@ -412,13 +408,15 @@
                 }
             }
             
+            console.log(`Waiting for ${imagePromises.length} image checks for ${category}...`);
+            
             // Wait for all image checks to complete with longer timeout
             const results = await Promise.allSettled(imagePromises);
             foundImages = results
                 .filter(result => result.status === 'fulfilled' && result.value !== null)
                 .map(result => result.value);
             
-            console.log(`Found ${foundImages.length} images for ${category}`);
+            console.log(`AFTER PROMISE RESOLUTION: Found ${foundImages.length} images for ${category}`);
             
             // Debug: Log the actual found images
             foundImages.forEach(img => console.log(`- ${img.src}`));
@@ -435,14 +433,17 @@
                 return getNumber(a.filename) - getNumber(b.filename);
             });
             
+            // Only create DOM elements if we actually found images
+            if (foundImages.length === 0) {
+                console.warn(`No images found for ${category} - skipping DOM creation`);
+                return;
+            }
+            
             // Create portfolio items
             console.log(`Creating ${foundImages.length} portfolio items for ${category}`);
             
-            // Take only first 2 images per category for now to debug
-            const imagesToShow = foundImages.slice(0, 2);
-            console.log(`Showing first ${imagesToShow.length} images for ${category}`);
-            
-            imagesToShow.forEach((imageData, index) => {
+            // Show all found images, not just 2
+            foundImages.forEach((imageData, index) => {
                 console.log(`Creating item ${index + 1}: ${imageData.src}`);
                 
                 const portfolioItem = document.createElement('div');
@@ -474,6 +475,8 @@
                 grid.appendChild(portfolioItem);
                 console.log(`Added item to grid, grid now has ${grid.children.length} items`);
             });
+            
+            console.log(`COMPLETED loading ${category}: ${foundImages.length} items added to grid`);
         }
 
         function setupFiltering() {
