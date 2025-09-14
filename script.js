@@ -316,7 +316,12 @@ function initPageTransitions() {
     // Handle all internal links
     document.addEventListener('click', function(e) {
         const link = e.target.closest('a');
-        if (link && link.href && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:') && !link.href.startsWith('#')) {
+        if (link && link.href && !link.href.startsWith('mailto:') && !link.href.startsWith('tel:')) {
+            // Skip hash links (same page navigation)
+            if (link.href.startsWith('#') || link.getAttribute('href').startsWith('#')) {
+                return; // Let default behavior handle smooth scrolling
+            }
+            
             // Check if it's an internal link
             const currentDomain = window.location.origin;
             if (link.href.startsWith(currentDomain) || link.href.startsWith('./') || link.href.startsWith('../') || !link.href.includes('://')) {
