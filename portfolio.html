@@ -383,13 +383,15 @@
 
         async function loadImagesFromFolder(category, folderPath, grid) {
             console.log(`Loading images for category: ${category}`);
-            const imageExtensions = ['jpg', 'png'];
+            const imageExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'];
             let foundImages = [];
             
-            // Test multiple possible filenames
+            // Test multiple possible filenames - expanded range
             const possibleNames = ['cover'];
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 1; i <= 20; i++) {
                 possibleNames.push(`image (${i})`);
+                possibleNames.push(`Image (${i})`); // Try capitalized version
+                possibleNames.push(`${i}`); // Try just numbers
             }
             
             // Test combinations - but only add to foundImages array after all checks
@@ -405,7 +407,7 @@
                         const timeout = setTimeout(() => {
                             console.log(`Timeout for: ${imagePath}`);
                             resolve(null);
-                        }, 5000); // Increased to 5 seconds for mobile
+                        }, 1000); // Reduced timeout to prevent hanging
                         
                         img.onload = () => {
                             clearTimeout(timeout);
@@ -432,7 +434,7 @@
             
             console.log(`Waiting for ${imagePromises.length} image checks for ${category}...`);
             
-            // Wait for all image checks to complete with longer timeout
+            // Wait for all image checks to complete
             const results = await Promise.allSettled(imagePromises);
             foundImages = results
                 .filter(result => result.status === 'fulfilled' && result.value !== null)
@@ -440,8 +442,14 @@
             
             console.log(`AFTER PROMISE RESOLUTION: Found ${foundImages.length} images for ${category}`);
             
-            // Debug: Log the actual found images
-            foundImages.forEach(img => console.log(`- ${img.src}`));
+            // Debug: Log the actual found images with more detail
+            foundImages.forEach((img, index) => {
+                console.log(`${index + 1}. Found: ${img.src} (${img.filename})`);
+            });
+            
+            // Log failed attempts for debugging
+            const failedCount = imagePromises.length - foundImages.length;
+            console.log(`Failed to load ${failedCount} potential images for ${category}`);
             
             // Sort: cover first, then image (1), image (2), etc.
             foundImages.sort((a, b) => {
