@@ -383,15 +383,13 @@
 
         async function loadImagesFromFolder(category, folderPath, grid) {
             console.log(`Loading images for category: ${category}`);
-            const imageExtensions = ['jpg', 'jpeg', 'png', 'JPG', 'JPEG', 'PNG'];
+            const imageExtensions = ['jpg', 'png'];
             let foundImages = [];
             
-            // Test multiple possible filenames - expanded range
+            // Test multiple possible filenames
             const possibleNames = ['cover'];
-            for (let i = 1; i <= 20; i++) {
+            for (let i = 1; i <= 12; i++) {
                 possibleNames.push(`image (${i})`);
-                possibleNames.push(`Image (${i})`); // Try capitalized version
-                possibleNames.push(`${i}`); // Try just numbers
             }
             
             // Test combinations - but only add to foundImages array after all checks
@@ -404,26 +402,20 @@
                     
                     const promise = new Promise((resolve) => {
                         const img = new Image();
-                        const timeout = setTimeout(() => {
-                            console.log(`Timeout for: ${imagePath}`);
-                            resolve(null);
-                        }, 3000); // Increased timeout for network issues
-                        
+                        const timeout = setTimeout(() => resolve(null), 100);
                         img.onload = () => {
                             clearTimeout(timeout);
-                            console.log(`✅ Successfully found: ${imagePath}`);
+                            console.log(`Found image: ${imagePath}`);
                             resolve({
                                 src: imagePath,
                                 filename: filename,
                                 isCover: name.toLowerCase() === 'cover'
                             });
                         };
-                        img.onerror = (error) => {
+                        img.onerror = () => {
                             clearTimeout(timeout);
-                            console.log(`❌ Network error for: ${imagePath}`, error);
                             resolve(null);
                         };
-                        
                         img.src = imagePath;
                     });
                     
@@ -433,35 +425,12 @@
             
             console.log(`Waiting for ${imagePromises.length} image checks for ${category}...`);
             
-            // Process images in smaller batches to avoid overwhelming the browser
-            const batchSize = 10;
-            const allResults = [];
+            // Wait for all image checks to complete
+            const results = await Promise.all(imagePromises);
+            foundImages = results.filter(result => result !== null);
             
-            for (let i = 0; i < imagePromises.length; i += batchSize) {
-                const batch = imagePromises.slice(i, i + batchSize);
-                console.log(`Processing batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(imagePromises.length/batchSize)} for ${category}`);
-                
-                const batchResults = await Promise.allSettled(batch);
-                allResults.push(...batchResults);
-                
-                // Small delay between batches
-                await new Promise(resolve => setTimeout(resolve, 100));
-            }
-            
-            foundImages = allResults
-                .filter(result => result.status === 'fulfilled' && result.value !== null)
-                .map(result => result.value);
-            
-            console.log(`🎯 FINAL RESULT: Found ${foundImages.length} images for ${category}`);
-            
-            // Debug: Log the actual found images with more detail
-            foundImages.forEach((img, index) => {
-                console.log(`${index + 1}. ✅ ${img.src}`);
-            });
-            
-            // Log failed attempts for debugging
-            const failedCount = imagePromises.length - foundImages.length;
-            console.log(`⚠️ ${failedCount} images failed to load for ${category}`);
+            console.log(`Found ${foundImages.length} images for ${category}`);
+            foundImages.forEach(img => console.log(`- ${img.src}`));
             
             // Sort: cover first, then image (1), image (2), etc.
             foundImages.sort((a, b) => {
@@ -495,34 +464,17 @@
                 const imgElement = document.createElement('img');
                 imgElement.alt = `${category} - ${imageData.filename}`;
                 
-                // Force immediate loading and add retry mechanism
-                let retryCount = 0;
-                const maxRetries = 3;
+                imgElement.src = imageData.src;
+                imgElement.alt = `${category} - ${imageData.filename}`;
+                imgElement.loading = 'lazy';
                 
-                const loadImage = () => {
-                    imgElement.src = imageData.src + '?v=' + Date.now(); // Cache busting
-                    imgElement.loading = 'eager';
-                };
-                
+                // Add error handling for images
                 imgElement.onerror = () => {
-                    retryCount++;
-                    console.error(`❌ Display failed for: ${imageData.src} (attempt ${retryCount})`);
-                    
-                    if (retryCount < maxRetries) {
-                        console.log(`🔄 Retrying image load: ${imageData.src}`);
-                        setTimeout(loadImage, 1000 * retryCount); // Exponential backoff
-                    } else {
-                        console.error(`💥 Final failure for: ${imageData.src}`);
-                        portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Image failed to load: ${imageData.filename}</div>`;
-                    }
+                    console.error(`Failed to load image: ${imageData.src}`);
                 };
-                
                 imgElement.onload = () => {
-                    console.log(`✅ Successfully displayed: ${imageData.src}`);
+                    console.log(`Successfully loaded: ${imageData.src}`);
                 };
-                
-                // Initial load
-                loadImage();
                 
                 portfolioItem.appendChild(imgElement);
                 
