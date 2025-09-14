@@ -407,24 +407,23 @@
                         const timeout = setTimeout(() => {
                             console.log(`Timeout for: ${imagePath}`);
                             resolve(null);
-                        }, 1000); // Reduced timeout to prevent hanging
+                        }, 3000); // Increased timeout for network issues
                         
                         img.onload = () => {
                             clearTimeout(timeout);
-                            console.log(`Found image: ${imagePath}`);
+                            console.log(`✅ Successfully found: ${imagePath}`);
                             resolve({
                                 src: imagePath,
                                 filename: filename,
                                 isCover: name.toLowerCase() === 'cover'
                             });
                         };
-                        img.onerror = () => {
+                        img.onerror = (error) => {
                             clearTimeout(timeout);
-                            console.log(`Failed to load: ${imagePath}`);
+                            console.log(`❌ Network error for: ${imagePath}`, error);
                             resolve(null);
                         };
                         
-                        // Remove crossorigin for mobile compatibility
                         img.src = imagePath;
                     });
                     
@@ -434,22 +433,35 @@
             
             console.log(`Waiting for ${imagePromises.length} image checks for ${category}...`);
             
-            // Wait for all image checks to complete
-            const results = await Promise.allSettled(imagePromises);
-            foundImages = results
+            // Process images in smaller batches to avoid overwhelming the browser
+            const batchSize = 10;
+            const allResults = [];
+            
+            for (let i = 0; i < imagePromises.length; i += batchSize) {
+                const batch = imagePromises.slice(i, i + batchSize);
+                console.log(`Processing batch ${Math.floor(i/batchSize) + 1} of ${Math.ceil(imagePromises.length/batchSize)} for ${category}`);
+                
+                const batchResults = await Promise.allSettled(batch);
+                allResults.push(...batchResults);
+                
+                // Small delay between batches
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+            
+            foundImages = allResults
                 .filter(result => result.status === 'fulfilled' && result.value !== null)
                 .map(result => result.value);
             
-            console.log(`AFTER PROMISE RESOLUTION: Found ${foundImages.length} images for ${category}`);
+            console.log(`🎯 FINAL RESULT: Found ${foundImages.length} images for ${category}`);
             
             // Debug: Log the actual found images with more detail
             foundImages.forEach((img, index) => {
-                console.log(`${index + 1}. Found: ${img.src} (${img.filename})`);
+                console.log(`${index + 1}. ✅ ${img.src}`);
             });
             
             // Log failed attempts for debugging
             const failedCount = imagePromises.length - foundImages.length;
-            console.log(`Failed to load ${failedCount} potential images for ${category}`);
+            console.log(`⚠️ ${failedCount} images failed to load for ${category}`);
             
             // Sort: cover first, then image (1), image (2), etc.
             foundImages.sort((a, b) => {
@@ -483,19 +495,34 @@
                 const imgElement = document.createElement('img');
                 imgElement.alt = `${category} - ${imageData.filename}`;
                 
-                // Direct loading without preloading for mobile compatibility
-                imgElement.src = imageData.src;
-                imgElement.loading = 'eager'; // Force eager loading on mobile
+                // Force immediate loading and add retry mechanism
+                let retryCount = 0;
+                const maxRetries = 3;
                 
-                // Add error handling for the img element
+                const loadImage = () => {
+                    imgElement.src = imageData.src + '?v=' + Date.now(); // Cache busting
+                    imgElement.loading = 'eager';
+                };
+                
                 imgElement.onerror = () => {
-                    console.error(`Failed to load image: ${imageData.src}`);
-                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Error loading: ${imageData.filename}</div>`;
+                    retryCount++;
+                    console.error(`❌ Display failed for: ${imageData.src} (attempt ${retryCount})`);
+                    
+                    if (retryCount < maxRetries) {
+                        console.log(`🔄 Retrying image load: ${imageData.src}`);
+                        setTimeout(loadImage, 1000 * retryCount); // Exponential backoff
+                    } else {
+                        console.error(`💥 Final failure for: ${imageData.src}`);
+                        portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Image failed to load: ${imageData.filename}</div>`;
+                    }
                 };
                 
                 imgElement.onload = () => {
-                    console.log(`Successfully loaded: ${imageData.src}`);
+                    console.log(`✅ Successfully displayed: ${imageData.src}`);
                 };
+                
+                // Initial load
+                loadImage();
                 
                 portfolioItem.appendChild(imgElement);
                 
