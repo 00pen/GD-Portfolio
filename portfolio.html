@@ -352,15 +352,31 @@
         }
 
         async function loadPortfolioItems() {
-            const grid = document.getElementById('portfolioGrid');
-            grid.innerHTML = ''; // Clear existing items
+            console.log('Starting portfolio loading...');
+            const grid = document.querySelector('.portfolio-grid');
             
-            console.log('Starting to load portfolio items...');
+            // Clear any existing items
+            grid.innerHTML = '';
             
-            // Load images from each category folder sequentially
-            for (const category of portfolioData.categories) {
-                console.log(`Processing category: ${category}`);
-                await loadImagesFromFolder(category, `images/portfolio/${category}/`, grid);
+            const categories = [
+                { name: 'Brand Identity', folder: 'images/portfolio/Brand Identity/' },
+                { name: 'Event Design', folder: 'images/portfolio/Event Design/' },
+                { name: 'Food & Lifestyle', folder: 'images/portfolio/Food & Lifestyle/' }
+            ];
+            
+            // Check if we're on mobile
+            const isMobile = window.innerWidth <= 768;
+            console.log(`Device type: ${isMobile ? 'Mobile' : 'Desktop'}`);
+            
+            // Load each category sequentially to avoid overwhelming the browser
+            for (const category of categories) {
+                console.log(`Loading category: ${category.name}`);
+                await loadImagesFromFolder(category.name, category.folder, grid);
+                
+                // Add extra delay on mobile for better loading
+                if (isMobile) {
+                    await new Promise(resolve => setTimeout(resolve, 500));
+                }
             }
             
             console.log(`Finished loading. Total items in grid: ${grid.children.length}`);
@@ -390,7 +406,7 @@
                         const timeout = setTimeout(() => {
                             console.log(`Timeout for: ${imagePath}`);
                             resolve(null);
-                        }, 2000); // Increased to 2 seconds
+                        }, 5000); // Increased to 5 seconds for mobile
                         
                         img.onload = () => {
                             clearTimeout(timeout);
@@ -407,8 +423,7 @@
                             resolve(null);
                         };
                         
-                        // Add crossorigin attribute for better loading reliability
-                        img.crossOrigin = 'anonymous';
+                        // Remove crossorigin for mobile compatibility
                         img.src = imagePath;
                     });
                     
@@ -461,25 +476,19 @@
                 const imgElement = document.createElement('img');
                 imgElement.alt = `${category} - ${imageData.filename}`;
                 
-                // Preload image to ensure it loads before adding to DOM
-                const preloadImg = new Image();
-                preloadImg.onload = () => {
-                    console.log(`Preloaded and displaying: ${imageData.src}`);
-                    imgElement.src = imageData.src;
-                };
-                preloadImg.onerror = () => {
-                    console.error(`Failed to preload image: ${imageData.src}`);
+                // Direct loading without preloading for mobile compatibility
+                imgElement.src = imageData.src;
+                imgElement.loading = 'eager'; // Force eager loading on mobile
+                
+                // Add error handling for the img element
+                imgElement.onerror = () => {
+                    console.error(`Failed to load image: ${imageData.src}`);
                     portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Error loading: ${imageData.filename}</div>`;
                 };
                 
-                // Add final error handling for the actual img element
-                imgElement.onerror = () => {
-                    console.error(`Final load failed for: ${imageData.src}`);
-                    portfolioItem.innerHTML = `<div style="padding: 20px; background: #f0f0f0; text-align: center; color: #666;">Image unavailable</div>`;
+                imgElement.onload = () => {
+                    console.log(`Successfully loaded: ${imageData.src}`);
                 };
-                
-                // Start preloading
-                preloadImg.src = imageData.src;
                 
                 portfolioItem.appendChild(imgElement);
                 
